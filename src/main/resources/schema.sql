@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS urldetails
+(
+    `ID` VARCHAR(60) DEFAULT RANDOM_UUID() PRIMARY KEY,
+    `URL_ID` varchar(60) NOT NULL,
+    `SHORT_URL` varchar NOT NULL,
+    `LONG_URL` varchar NOT NULL
+);
