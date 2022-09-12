@@ -19,6 +19,21 @@ class UrlService(val urlrepository: UrlServiceRepository) : ApiInterface {
 
     override fun getShortUrl(longUrl: String): UrlDetails {
         //httpClient to invoke rebrandly api for url shortening
+        val (client, request) = createRequest(longUrl)
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        val mapper = ObjectMapper();
+        var shrtUrl: ShortUrlApiResponse = mapper.readValue<ShortUrlApiResponse>(response.body())
+        var urlDetail = UrlDetails(
+            null,
+            shrtUrl.id,
+            shrtUrl.shortUrl, longUrl
+        )
+        //save entity to db
+        return post(urlDetail)
+
+    }
+
+    private fun createRequest(longUrl: String): Pair<HttpClient, HttpRequest> {
         val domainVal = mapOf("fullName" to "rebrand.ly")
         val values =
             mapOf("destination" to "$longUrl", "domain" to domainVal)
@@ -33,17 +48,7 @@ class UrlService(val urlrepository: UrlServiceRepository) : ApiInterface {
             .uri(URI.create(BASE_URL))
             .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        val mapper = ObjectMapper();
-        var shrtUrl: ShortUrlApiResponse = mapper.readValue<ShortUrlApiResponse>(response.body())
-
-        var urlDetail = UrlDetails(
-            null,
-            shrtUrl.id,
-            shrtUrl.shortUrl, longUrl
-        )
-        //save entity to db
-        return post(urlDetail)
+        return Pair(client, request)
     }
 
     fun post(urlDetail: UrlDetails): UrlDetails {

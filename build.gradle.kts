@@ -21,9 +21,11 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	testImplementation("org.testng:testng:7.1.0")
 	runtimeOnly("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.json:json:20220320")
+	testImplementation ("org.junit.jupiter:junit-jupiter-params:5.1.0")
 }
 
 tasks.withType<KotlinCompile> {
@@ -34,6 +36,9 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+	useJUnitPlatform()
+}
+tasks.test {
 	useJUnitPlatform()
 }
 
